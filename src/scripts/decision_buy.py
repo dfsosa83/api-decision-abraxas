@@ -12,7 +12,7 @@ import pickle
 import joblib
 
 #define data path
-path = 'C:/Users/david/OneDrive/Documents/decision-abraxas/data/raw/'
+path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/raw/'
 
 #read data from path
 mtd5_df = pd.read_csv(path+'EURUSD_H1.csv')
@@ -23,7 +23,7 @@ mtd5_df = pd.read_csv(path+'EURUSD_H1.csv')
 mtd5_df['time'] = pd.to_datetime(mtd5_df['time'])
 
 #define models path
-path_models = 'C:/Users/david/OneDrive/Documents/decision-abraxas/models/'
+path_models = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/models/'
 
 # Load the base models
 xg_model_0 = joblib.load(path_models + 'abraxas_M60_buy_xg_model_v3_std.sav')
@@ -543,7 +543,7 @@ df_to_apply_rules_buy['confir_buy'] = df_to_apply_rules_buy.apply(validate_and_c
 decision_dataset_buy = df_to_apply_rules_buy[['datetime', 'Class0_buy', 'Class1_buy', 'confir_buy']].copy()
 
 #define path for processed data
-path_decision = 'C:/Users/david/OneDrive/Documents/decision-abraxas/data/processed/'
+path_decision = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/processed/'
 
 #save decision dataset
 decision_dataset_buy.to_csv(path_decision + 'decision_dataset_buy.csv', index=False)

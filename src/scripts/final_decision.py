@@ -12,7 +12,7 @@ import pickle
 import joblib
 
 #define data path
-path = 'C:/Users/david/OneDrive/Documents/decision-abraxas/data/processed/'
+path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/processed/'
 
 #load data
 df_buy = pd.read_csv(path + 'decision_dataset_buy.csv')
@@ -72,8 +72,14 @@ def add_final_decision_column(df):
 updated_df = add_final_decision_column(merged_df)
 print(updated_df.head(10))
 
-#ave in a df last 5 rows
+#print updated_df values
+print(updated_df['final_decision'].value_counts())
+
+#save in a df last 5 rows
 df_last_row = updated_df.tail(1)
+
+#save in a csv file
+df_last_row.to_csv(path + 'last_final_decision.csv', index=False)
 
 
 
