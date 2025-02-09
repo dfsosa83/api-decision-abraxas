@@ -1,0 +1,21 @@
+name: api_abraxas_decision
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.12
+  - pandas=2.2.2
+  - numpy=1.26.4
+  - scikit-learn=1.5.2
+  - matplotlib
+  - seaborn
+  - statsmodels
+  - scipy
+  - pip
+  - pip:
+    - lightgbm==4.5.0
+    - xgboost
+    - torch
+    - tensorflow==2.17.1
+    - keras==3.5.0
+    - ta

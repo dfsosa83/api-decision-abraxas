@@ -1,0 +1,81 @@
+import sys
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+import seaborn as sns
+import ta
+from lightgbm import LGBMClassifier
+from xgboost import XGBClassifier
+import xgboost as xgb
+import lightgbm as lgb
+import pickle
+import joblib
+
+#define data path
+path = 'C:/Users/david/OneDrive/Documents/decision-abraxas/data/processed/'
+
+#load data
+df_buy = pd.read_csv(path + 'decision_dataset_buy.csv')
+df_sell = pd.read_csv(path + 'decision_dataset_sell.csv')
+
+#merge data by datetime
+df_0 = pd.merge(df_buy, df_sell, on='datetime', how='inner')
+
+# Define the desired column order
+ordered_columns = ['datetime', 'Class0_buy', 'Class1_buy', 'Class0_sell', 'Class1_sell', 'confir_buy', 'confir_sell']
+
+# Reorder the columns of the merged dataframe
+merged_df = df_0[ordered_columns].copy()
+
+#head
+#print(df.head(10))
+
+from collections import Counter
+
+# Count combinations of 'confir_buy' and 'confir_sell'
+combinations = Counter(zip(merged_df['confir_buy'], merged_df['confir_sell']))
+
+# Print the combinations and their counts
+#for (buy, sell), count in combinations.items():
+ #   print(f"confir_buy: {buy}, confir_sell: {sell}, Count: {count}")
+
+# Define the decision column
+def add_final_decision_column(df):
+    conditions = [
+        (df['confir_buy'] == 'below_threshold') & (df['confir_sell'] == 'below_threshold'),
+        (df['confir_buy'] == 'not_strong') & (df['confir_sell'] == 'below_threshold'),
+        (df['confir_buy'] == 'not_strong') & (df['confir_sell'] == 'confirm'),
+        (df['confir_buy'] == 'confirm') & (df['confir_sell'] == 'confirm'),
+        (df['confir_buy'] == 'confirm') & (df['confir_sell'] == 'below_threshold'),
+        (df['confir_buy'] == 'confirm') & (df['confir_sell'] == 'not_strong'),
+        (df['confir_buy'] == 'not_strong') & (df['confir_sell'] == 'not_strong'),
+        (df['confir_buy'] == 'below_threshold') & (df['confir_sell'] == 'not_strong'),
+        (df['confir_buy'] == 'below_threshold') & (df['confir_sell'] == 'confirm')
+    ]
+
+    decisions = [
+        'do_nothing',
+        'do_nothing',
+        'sell',
+        'indecision',
+        'buy',
+        'buy',
+        'do_nothing',
+        'do_nothing',
+        'sell'
+    ]
+
+    df['final_decision'] = pd.Series(np.select(conditions, decisions, default='unknown'))
+    return df
+
+# Add the final decision column to the dataframe
+updated_df = add_final_decision_column(merged_df)
+print(updated_df.head(10))
+
+#ave in a df last 5 rows
+df_last_row = updated_df.tail(1)
+
+
+
+
+

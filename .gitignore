@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Data files
+*.csv
+*.pickle
+*.pkl
+*.parquet
+*.h5
+*.feather
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs and databases
+*.log
+*.sqlite
+
+# Local development
+.env
+*.env
+
+# Ignore specific file in root directory
