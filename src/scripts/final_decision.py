@@ -75,8 +75,11 @@ print(updated_df.head(10))
 #print updated_df values
 print(updated_df['final_decision'].value_counts())
 
+#add a column with the currency pair
+updated_df['currency_pair'] = 'EUR/USD'
+
 #save in a df last 5 rows
-df_last_row = updated_df.tail(1)
+df_last_row = updated_df.tail(10)
 
 #save in a csv file
 df_last_row.to_csv(path + 'last_final_decision.csv', index=False)
