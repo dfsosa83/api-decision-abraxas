@@ -1,0 +1,21 @@
+conda install -n base -c conda-forge mamba  # [6][8]
+
+mamba env create -f environment.yml -n api_abraxas_decision_0  # [2][5]
+
+channels:
+  - conda-forge  # Prioritize first [3][5]
+  - defaults
+
+dependencies:
+  - python=3.10.12
+  - tensorflow=2.15.0  # Explicit version [5]
+  - keras=3.4.1
+  - lightgbm=4.5.0
+  - xgboost=2.0.3
+  - pip=23.3.1  # Pin pip version
+  - pip:
+    - MetaTrader5
+    - ta==0.11.0  # Version constraint
+    - torch==2.3.0  # Explicit version
+
+conda config --set auto_activate_base false  # [2][7]

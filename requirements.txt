@@ -1,0 +1,4 @@
+charset-normalizer>=3.0.0
+MetaTrader5
+ta
+torch

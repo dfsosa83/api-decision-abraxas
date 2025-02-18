@@ -65,7 +65,7 @@ def add_final_decision_column(df):
         'sell'
     ]
 
-    df['final_decision'] = pd.Series(np.select(conditions, decisions, default='unknown'))
+    df['action'] = pd.Series(np.select(conditions, decisions, default='unknown'))
     return df
 
 # Add the final decision column to the dataframe
@@ -73,7 +73,7 @@ updated_df = add_final_decision_column(merged_df)
 print(updated_df.head(10))
 
 #print updated_df values
-print(updated_df['final_decision'].value_counts())
+print(updated_df['action'].value_counts())
 
 #add a column with the currency pair
 updated_df['currency_pair'] = 'EUR/USD'
