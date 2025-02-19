@@ -12,10 +12,10 @@ import pickle
 import joblib
 
 #define data path
-path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/raw/'
+path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/'
 
 #read data from path
-mtd5_df = pd.read_csv(path+'EURUSD_H1.csv')
+mtd5_df = pd.read_csv(path+'Export_EURUSD_H1.csv')
 #pint shape
 #print(mtd5_df.shape)
 
@@ -23,13 +23,13 @@ mtd5_df = pd.read_csv(path+'EURUSD_H1.csv')
 mtd5_df['time'] = pd.to_datetime(mtd5_df['time'])
 
 #define models path
-path_models = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/models/'
+path_models = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/modelsBin/sell/'
 
 # Load the base models
-xg_model_0 = joblib.load(path_models + 'abraxas_M60_sell_xg_model_v3_std.sav')
-lg_model_1 = joblib.load(path_models + 'abraxas_M60_sell_lg_model_v3_std.sav')
+xg_model_0 = joblib.load(path_models + 'Abraxas_H1_sell_xg_model_v3_std.sav')
+lg_model_1 = joblib.load(path_models + 'Abraxas_H1_sell_lg_model_v3_std.sav')
 #load metamodel
-best_meta_model = joblib.load(path_models + 'abraxas_M60_sell_meta_model_v3_std.sav')  # Assuming you saved it with this name
+best_meta_model = joblib.load(path_models + 'Abraxas_H1_sell_meta_model_v3_std.sav')  # Assuming you saved it with this name
 
 #feature engineering function
 def features_engineering(data):
@@ -475,7 +475,7 @@ df_to_apply_rules_sell = joined_data_test[selected_features_names_meta_model + [
 df_to_apply_rules_sell.rename(columns={'time': 'datetime'}, inplace=True)
 
 #conformal threshold
-threshold = 0.7513185456178011
+threshold = 0.6350406453614887
 
 #rules function
 def confirm_prediction(row):

@@ -1,7 +1,7 @@
 import MetaTrader5 as mt5
 import pandas as pd
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Set the paths
 working_dir = "C:/Users/david/OneDrive/Documents/api-decision-abraxas"
@@ -9,7 +9,7 @@ working_dir = "C:/Users/david/OneDrive/Documents/api-decision-abraxas"
 #mt5Path = "C:/Program Files/RoboForexMT5/terminal64.exe"
 mt5Path = "C:/Program Files/FPMarkets MT5 Terminal/terminal64.exe"
 #symbol = "EURUSD.r" #EURUSD.r USDJPY.r GBPUSD.r USDCHF.r AUDUSD.r NZDUSD.r USDCAD.r
-symbol =  "USDJPY" #"USDJPY"  #EURUSD USDJPY GBPUSD USDCHF AUDUSD NZDUSD USDCAD #"USDJPY"
+symbol =  "EURUSD" #"USDJPY"  #EURUSD USDJPY GBPUSD USDCHF AUDUSD NZDUSD USDCAD #"USDJPY"
 csv_file = working_dir + "/data/Export_" + symbol + "_H1.csv"
 
 # Initialize MetaTrader5
@@ -24,8 +24,8 @@ if not mt5.login(login=7082362, password="u#wWU#64esZjNVn", server="FPMarketsLLC
 
 timezone = pytz.timezone("Etc/UTC")
 from_time = datetime(2019, 1, 2, tzinfo=timezone)
-#from_time = datetime(2025, 1, 2, tzinfo=timezone)
-to_time = datetime(2025, 2, 15, tzinfo=timezone)
+#to_time = datetime(2025, 2, 15, tzinfo=timezone)
+to_time = datetime.now(timezone) 
 
 data = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H1, from_time, to_time)
 #print('data: ', data)

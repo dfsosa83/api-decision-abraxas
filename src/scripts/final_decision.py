@@ -8,6 +8,7 @@ from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 import xgboost as xgb
 import lightgbm as lgb
+from colorama import Fore, Back, Style, init
 import pickle
 import joblib
 
@@ -65,21 +66,35 @@ def add_final_decision_column(df):
         'sell'
     ]
 
-    df['action'] = pd.Series(np.select(conditions, decisions, default='unknown'))
+    df['final_decision'] = pd.Series(np.select(conditions, decisions, default='unknown'))
     return df
 
 # Add the final decision column to the dataframe
 updated_df = add_final_decision_column(merged_df)
-print(updated_df.head(10))
+#print(updated_df.head(10))
 
 #print updated_df values
-print(updated_df['action'].value_counts())
+#print(updated_df['final_decision'].value_counts())
 
 #add a column with the currency pair
 updated_df['currency_pair'] = 'EUR/USD'
 
 #save in a df last 5 rows
 df_last_row = updated_df.tail(10)
+
+#print a message only if last row is sell or buy
+# Initialize colorama
+init()
+
+# print a message only if last row is sell or buy
+if df_last_row['final_decision'].iloc[0] in ['sell', 'buy']:
+    print(Fore.GREEN + Style.BRIGHT + '\n' + '=' * 50)
+    print('Last row is sell or buy for: ABRAXAS'.center(50))
+    print('=' * 50 + '\n' + Style.RESET_ALL)
+else:
+    print(Fore.RED + Style.BRIGHT + '\n' + '=' * 50)
+    print('Last row is not sell or buy for: ABRAXAS'.center(50))
+    print('=' * 50 + '\n' + Style.RESET_ALL)
 
 #save in a csv file
 df_last_row.to_csv(path + 'last_final_decision.csv', index=False)

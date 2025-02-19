@@ -4,9 +4,16 @@ import time
 
 
 SCRIPTS = [
-    #"decision_sell.py", #turn or off depending on the user
-    #"decision_buy.py", #turn or off depending on the user
+    "ExportDataFromMT.py", #turn or off depending on the user
+    "ExportDataFromMT_dokko.py", #turn or off depending on the user
+    "decision_sell.py", #turn or off depending on the user
+    "decision_buy.py", #turn or off depending on the user
     "final_decision.py", #turn or off depending on the user
+    "api_conn3.py", #turn or off depending on the user
+    "decision_sell_dokko.py", #turn or off depending on the user
+    "decision_buy_dokko.py", #turn or off depending on the user
+    "final_decision_dokko.py", #turn or off depending on the user
+    "api_conn3_dokko.py", #turn or off depending on the user
 ]
 
 def print_colored(text, color):

@@ -12,10 +12,10 @@ import pickle
 import joblib
 
 #define data path
-path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/raw/'
+path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/'
 
 #read data from path
-mtd5_df = pd.read_csv(path+'EURUSD_H1.csv')
+mtd5_df = pd.read_csv(path+'Export_EURUSD_H1.csv')
 #pint shape
 #print(mtd5_df.shape)
 
@@ -23,14 +23,14 @@ mtd5_df = pd.read_csv(path+'EURUSD_H1.csv')
 mtd5_df['time'] = pd.to_datetime(mtd5_df['time'])
 
 #define models path
-path_models = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/models/'
+path_models = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/modelsBin/buy/'
 
 # Load the base models
-xg_model_0 = joblib.load(path_models + 'abraxas_M60_buy_xg_model_v3_std.sav')
-lg_model_1 = joblib.load(path_models + 'abraxas_M60_buy_lg_model_v3_std.sav')
+xg_model_0 = joblib.load(path_models + 'Abraxas_H1_buy_xg_model_v3_std.sav')
+lg_model_1 = joblib.load(path_models + 'Abraxas_H1_buy_lg_model_v3_std.sav')
 
 #load metamodel
-best_meta_model = joblib.load(path_models + 'abraxas_M60_buy_meta_model_v3_std.sav')
+best_meta_model = joblib.load(path_models + 'Abraxas_H1_buy_meta_model_v3_std.sav')
 
 #feature engineering function
 def features_engineering(data):
