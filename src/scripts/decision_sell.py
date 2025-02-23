@@ -10,6 +10,9 @@ import xgboost as xgb
 import lightgbm as lgb
 import pickle
 import joblib
+import warnings
+warnings.filterwarnings('ignore', category=FutureWarning)
+
 
 #define data path
 path = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/'
@@ -472,7 +475,8 @@ df_to_apply_rules_sell = joined_data_test[selected_features_names_meta_model + [
 #print(df_to_apply_rules_sell.shape)
 
 #rename time by datetime
-df_to_apply_rules_sell.rename(columns={'time': 'datetime'}, inplace=True)
+#df_to_apply_rules_sell.rename(columns={'time': 'datetime'}, inplace=True)
+df_to_apply_rules_sell = df_to_apply_rules_sell.rename(columns={'time': 'datetime'})
 
 #conformal threshold
 threshold = 0.6350406453614887
@@ -524,7 +528,10 @@ def validate_and_confirm(row):
         return 'below_threshold'
 
 # Apply the validation and confirmation function
-df_to_apply_rules_sell['confir_sell'] = df_to_apply_rules_sell.apply(validate_and_confirm, axis=1)
+#df_to_apply_rules_sell['confir_sell'] = df_to_apply_rules_sell.apply(validate_and_confirm, axis=1)
+df_to_apply_rules_sell = df_to_apply_rules_sell.copy()
+df_to_apply_rules_sell.loc[:, 'confir_sell'] = df_to_apply_rules_sell.apply(validate_and_confirm, axis=1)
+
 
 # define decision dataset buy
 decision_dataset_sell = df_to_apply_rules_sell[['datetime', 'Class0_sell', 'Class1_sell', 'confir_sell']].copy()

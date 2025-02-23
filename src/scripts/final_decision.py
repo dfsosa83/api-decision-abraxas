@@ -80,7 +80,7 @@ updated_df = add_final_decision_column(merged_df)
 updated_df['currency_pair'] = 'EUR/USD'
 
 #save in a df last 5 rows
-df_last_row = updated_df.tail(10)
+df_last_row = updated_df.tail(1)
 
 #print a message only if last row is sell or buy
 # Initialize colorama

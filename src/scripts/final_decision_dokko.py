@@ -80,7 +80,7 @@ updated_df = add_final_decision_column(merged_df)
 updated_df['currency_pair'] = 'USD/JPY'
 
 #save in a df last 5 rows
-df_last_row = updated_df.tail(10)
+df_last_row = updated_df.tail(1)
 
 # print a message only if last row is sell or buy
 if df_last_row['final_decision'].iloc[0] in ['sell', 'buy']:
