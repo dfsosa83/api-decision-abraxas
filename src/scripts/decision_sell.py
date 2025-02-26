@@ -24,6 +24,11 @@ mtd5_df = pd.read_csv(path+'Export_EURUSD_H1.csv')
 
 #time to datitime
 mtd5_df['time'] = pd.to_datetime(mtd5_df['time'])
+# filter data by time
+mtd5_df = mtd5_df[mtd5_df['time'] >= '2024-01-01']
+#reset index
+mtd5_df = mtd5_df.reset_index(drop=True)
+
 
 #define models path
 path_models = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/modelsBin/sell/'
@@ -543,4 +548,4 @@ path_decision = 'C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/pro
 decision_dataset_sell.to_csv(path_decision + 'decision_dataset_sell.csv', index=False)
 
 #print head
-print('Sell Predictions',decision_dataset_sell.head())
+print('Sell Predictions',decision_dataset_sell.tail())

@@ -61,18 +61,23 @@ async def run_scripts():
 async def schedule_runner():
     while True:
         now = datetime.now()
-        next_hour = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
-        wait_time = (next_hour - now).total_seconds()
+        next_run = now.replace(minute=55, second=0, microsecond=0)
+        if now.minute >= 55:
+            next_run += timedelta(hours=1)
         
-        print_colored(f"Next run scheduled at: {next_hour}", "blue")
+        wait_time = (next_run - now).total_seconds()
+        
+        print_colored(f"Next run scheduled at: {next_run.strftime('%H:%M')}", "blue")
         await asyncio.sleep(wait_time)
         
         print_colored("Starting scheduled run", "blue")
         await run_scripts()
 
 async def main():
-    print_colored("Script scheduler started. Will run every hour.", "blue")
+    print_colored("Script scheduler started. Will run at 55 minutes past each hour.", "blue")
     await schedule_runner()
+
+
 
 if __name__ == "__main__":
     asyncio.run(main())
