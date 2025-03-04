@@ -16,6 +16,7 @@ headers = {
 
 path = "C:/Users/david/OneDrive/Documents/api-decision-abraxas/data//processed/last_final_decision_dokkodo.csv"
 decisions_file = "C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/decisions/decisions_dokkodo.csv"
+trade_execution_file = "C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/decisions/trade_executions_dokko.json"
 
 df = pd.read_csv(path)
 print(df)
@@ -62,7 +63,17 @@ Provide your analysis in the following format:
 
 FINAL DECISION: [CONFIRM/REJECT] {action.upper()} {currency_pair} for the next hour
 
-Justification: [2-3 sentences explaining the final decision]"""
+Justification: [2-3 sentences explaining the final decision]
+
+If the FINAL DECISION is CONFIRM or REJECT(if is REJECT, just add a warning to trader), please provide the following, remember brackets[] in **Trade Execution** answer, keep with brackects and numbers no letters need, i need to conserve format to save the data:
+
+**Trade Execution**
+- Entry: [Current price range]
+- Stop Loss: [Price level]
+- Take Profit: [Price level]
+
+Ensure that the Stop Loss and Take Profit levels are based on key support/resistance levels and maintain a favorable risk-reward ratio."""
+
 
     data = {
         "model": "sonar-reasoning-pro",
@@ -86,19 +97,60 @@ def extract_final_decision(response):
     return "UNKNOWN"
 
 def extract_justification(response):
-    match = re.search(r'\*\*Justification\*\*:(.*)', response, re.DOTALL)
+    match = re.search(r'Justification:(.*?)(?:\n\n|\Z)', response, re.DOTALL)
     if match:
         return match.group(1).strip()
     return "No justification provided"
 
+def extract_trade_execution(response):
+    pattern = r'(?i)(Entry|Stop Loss|Take Profit)\s*:\s*\[?([\d\.-]+(?:-[\d\.-]+)?)\]?'
+    matches = re.findall(pattern, response)
+    result = {}
+    for key, value in matches:
+        key = key.title().replace(' ', '_')
+        result[key] = value.strip('[]')
+    return result
+
 os.makedirs(os.path.dirname(decisions_file), exist_ok=True)
+os.makedirs(os.path.dirname(trade_execution_file), exist_ok=True)
 
 def append_decision(decision):
     df = pd.DataFrame([decision])
     df.to_csv(decisions_file, mode='a', header=not os.path.exists(decisions_file), index=False)
 
+def append_trade_execution(decision, trade_execution):
+    try:
+        required_keys = ['Entry', 'Stop_Loss', 'Take_Profit']
+        if not all(k in trade_execution for k in required_keys):
+            raise ValueError("Missing trade execution parameters")
+        
+        with open(trade_execution_file, 'a', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=required_keys)
+            if f.tell() == 0:
+                writer.writeheader()
+            writer.writerow(trade_execution)
+        print(f"Data written to {trade_execution_file}")
+    except Exception as e:
+        print(f"Critical write error: {str(e)}")
+
 df = pd.read_csv(path).tail(1)
 print(df)
+
+def save_full_response(response_text):
+    log_dir = "C:/Users/david/OneDrive/Documents/api-decision-abraxas/data/logs/"
+    os.makedirs(log_dir, exist_ok=True)
+    
+    log_file = os.path.join(log_dir, "dokko_agent_responses.log")
+    
+    try:
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(f"\n{'='*80}\n")
+            f.write(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(response_text)
+            f.write(f"\n{'='*80}\n")
+        print(f"Full response saved to: {log_file}")
+    except Exception as e:
+        print(f"Failed to save response: {str(e)}")
 
 if df['final_decision'].iloc[0] in ['sell', 'buy']:
     action = df['final_decision'].iloc[0]
@@ -112,25 +164,39 @@ if df['final_decision'].iloc[0] in ['sell', 'buy']:
     market_time = current_time.astimezone(market_tz)
     
     result = query_perplexity(action, currency_pair, local_time, market_time)
+    save_full_response(result)
+    print(f"Raw API Response:\n{result}\n")
+    
     print(f"Query: {action} {currency_pair}")
     print(f"Local Time (Panama): {local_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Market Time (GMT+5): {market_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Response: {result}\n")
+    
+    trade_execution = extract_trade_execution(result)
+    print(f"Parsed Execution Data: {trade_execution}")
     
     final_decision = extract_final_decision(result)
     justification = extract_justification(result)
     
     decision = {
-        'timestamp_local': local_time.strftime("%Y-%m-%d %H:%M:%S"),
-        'timestamp_market': market_time.strftime("%Y-%m-%d %H:%M:%S"),
-        'currency_pair': currency_pair,
-        'model_suggestion': action,
-        'agent_decision': final_decision,
-        'justification': justification
-    }
-    
+    'timestamp_local': local_time.strftime("%Y-%m-%d %H:%M:%S"),
+    'timestamp_market': market_time.strftime("%Y-%m-%d %H:%M:%S"),
+    'currency_pair': currency_pair,
+    'model_suggestion': action,
+    'agent_decision': final_decision,
+    'justification': justification,
+    'entry': trade_execution.get('Entry', ''),
+    'stop_loss': trade_execution.get('Stop_Loss', ''),
+    'take_profit': trade_execution.get('Take_Profit', '')
+}
+
     append_decision(decision)
-    
     print(f"Decision appended to: {decisions_file}")
+
+    if final_decision in ['CONFIRM','REJECT']:
+        try:
+            append_trade_execution(decision, trade_execution)
+        except ValueError as e:
+            print(f"Invalid Trade Data: {str(e)}")
+        with open('failed_responses.log', 'a') as f:
+            f.write(f"{datetime.now()} | {result}\n\n")
 else:
-    print("No valid action (buy/sell) found in the last row of last_final_decision_dokkodo.csv")
+    print("No valid action (buy/sell) found in the last row of last_final_decision.csv")

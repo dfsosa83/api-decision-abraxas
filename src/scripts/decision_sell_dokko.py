@@ -522,7 +522,7 @@ def confirm_prediction(row):
         strong_signals += 1
 
     # Return confirmation if majority of signals are strong
-    return 'confirm' if strong_signals >= 7 else 'not_strong'
+    return 'confirm' if strong_signals >= 6 else 'not_strong'
 
 def validate_and_confirm(row):
     if row['Class0_sell'] >= threshold or row['Class1_sell'] >= threshold:
